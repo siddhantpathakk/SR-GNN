@@ -6,7 +6,6 @@ from data_loader import *
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--dataset', default='sample', help='dataset name: diginetica/yoochoose1_4/yoochoose1_64/sample')
     parser.add_argument('--batchSize', type=int, default=100, help='input batch size')
     parser.add_argument('--hiddenSize', type=int, default=100, help='hidden state size')
     parser.add_argument('--epoch', type=int, default=30, help='the number of epochs to train for')
@@ -28,8 +27,8 @@ def parse_args():
 def main():
     args = parse_args()
     
-    train_data = pickle.load(open('../datasets/' + args.dataset + '/train.txt', 'rb'))
-    test_data = pickle.load(open('../datasets/' + args.dataset + '/test.txt', 'rb'))
+    train_data = pickle.load(open('../datasets/yoochoose1_4/train.txt', 'rb'))
+    test_data = pickle.load(open('../datasets/yoochoose1_4/test.txt', 'rb'))
 
     train_data = Data(train_data, shuffle=True)
     test_data = Data(test_data, shuffle=False)
