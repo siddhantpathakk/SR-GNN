@@ -1,5 +1,0 @@
-./data/* # DATA DIRECTORY (YOOCHOOSE)
-trainer.py # TRAINING SCRIPT with command line arguments
-data_loader.py # DATA LOADER
-model.py # MODEL
-utils.py # UTILS
