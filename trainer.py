@@ -27,29 +27,42 @@ def e2e_pipeline(args):
     logging.info("Parsing config file...")
     config = parse_config_json(args.config)
     
+    BATCH_SIZE = config['batch_size']
+    EPOCHS = config['epochs']
+    LEARNING_RATE = config['learning_rate']
+    OPTIMIZER = config['optimizer']
+    LOSS_FUNCTION = config['loss_function']
+    TRAIN_VAL_TEST_SPLIT = config['train_val_test_split']
+    MODEL_PARAMETERS = config['model_parameters']
+    
     logging.info("Loading data...")
     dataset_as_dict = load_data(args.dataset)
-    logging.info("Data loaded.")
     
     logging.info("Splitting dataset...")
-    train, test, val = split_dataset(dataset_as_dict, split_ratio=0.8, validation=True)
-    logging.info("Dataset splitted.")
+    train, test, val = split_dataset(dataset_as_dict, 
+                                     split_ratio=TRAIN_VAL_TEST_SPLIT, 
+                                     validation=True)
     
     logging.info("Converting to torch.datasets...")
     train_dataset = make_dataset(train)
     test_dataset = make_dataset(test)
     val_dataset = make_dataset(val)
-    logging.info("Datasets converted.")
     
     logging.info("Making dataloaders...")
-    train_dataloader, test_dataloader, val_dataloader = make_dataloaders(batch_size=args, train=train_dataset, test=test_dataset, val=val_dataset)
-    logging.info("Dataloaders made.")
+    train_dataloader, test_dataloader, val_dataloader = make_dataloaders(batch_size=BATCH_SIZE, 
+                                                                         train=train_dataset, 
+                                                                         test=test_dataset, 
+                                                                         val=val_dataset)
 
     logging.info("Loading model...")    
-    model = get_model(parameters=args, resume=args.model)
-    criterion = get_criterion(loss_fn=args.loss_function)
-    optimizer = get_optimizer(optimizer=args.optimizer, model=model, lr=args.learning_rate)
-    logging.info("Model, Loss Function and Optimizer loaded.")
+    model = get_model(parameters=MODEL_PARAMETERS, 
+                      resume=args.model)
+    
+    criterion = get_criterion(loss_fn=LOSS_FUNCTION)
+    
+    optimizer = get_optimizer(optimizer=OPTIMIZER, 
+                              model=model, 
+                              lr=LEARNING_RATE)
     
     logging.info("Training model...")
     model, model_metrics = train_model(model=model, 
@@ -57,17 +70,20 @@ def e2e_pipeline(args):
                                        val_dataloader=val_dataloader, 
                                        optimizer=optimizer, 
                                        loss_fn=criterion, 
-                                       epochs=args.epochs)
+                                       epochs=EPOCHS)
     logging.info("Model trained.")
     
     logging.info("Testing model...")
-    model_accuracy, model_loss = test_model(model=model, 
+    test_accuracy, test_loss = test_model(model=model, 
                                             test_dataloader=test_dataloader, 
                                             loss_fn=criterion)
-    logging.info("Model tested.")
     
     print(f'###################\n# Pipeline end #\n###################')
 
+    print(f'\nBEST Train accuracy:\t{max(model_metrics["train_accuracy"]):.4f}')
+    print(f'BEST Train loss:\t{min(model_metrics["train_loss"]):.4f}')
+    print(f'Test accuracy:\t{test_accuracy:.4f}')
+    print(f'Test loss:\t{test_loss:.4f}')
 
 if __name__ == '__main__':
     args = parse_args()
