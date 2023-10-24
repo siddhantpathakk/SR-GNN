@@ -143,7 +143,8 @@ def process_sequences(iseqs, idates):
 
 def preprocess():
     
-    train_sess, test_sess, sess_clicks = prepare('yoochoose/yoochoose-clicks.dat')
+    processed_data_dir = 'data/processes/'
+    train_sess, test_sess, sess_clicks = prepare('./data/yoochoose-clicks.dat')
     item_dict = {}
     
     train_ids, train_dates, train_seqs = get_train_dataset(train_sess, sess_clicks, item_dict)
@@ -170,16 +171,16 @@ def preprocess():
     if not os.path.exists('yoochoose1_64'):
         os.makedirs('yoochoose1_64')
         
-    pickle.dump(tes, open('yoochoose1_4/test.txt', 'wb'))
-    pickle.dump(tes, open('yoochoose1_64/test.txt', 'wb'))
+    pickle.dump(tes, open(processed_data_dir+'yoochoose1_4/test.txt', 'wb'))
+    pickle.dump(tes, open(processed_data_dir+'yoochoose1_64/test.txt', 'wb'))
 
     split4, split64 = int(len(tr_seqs) / 4), int(len(tr_seqs) / 64)
 
     tra4, tra64 = (tr_seqs[-split4:], tr_labs[-split4:]), (tr_seqs[-split64:], tr_labs[-split64:])
     seq4, seq64 = train_seqs[tr_ids[-split4]:], train_seqs[tr_ids[-split64]:]
 
-    pickle.dump(tra4, open('yoochoose1_4/train.txt', 'wb'))
-    pickle.dump(seq4, open('yoochoose1_4/all_train_seq.txt', 'wb'))
+    pickle.dump(tra4, open(processed_data_dir+'yoochoose1_4/train.txt', 'wb'))
+    pickle.dump(seq4, open(processed_data_dir+'yoochoose1_4/all_train_seq.txt', 'wb'))
 
-    pickle.dump(tra64, open('yoochoose1_64/train.txt', 'wb'))
-    pickle.dump(seq64, open('yoochoose1_64/all_train_seq.txt', 'wb'))
+    pickle.dump(tra64, open(processed_data_dir+'yoochoose1_64/train.txt', 'wb'))
+    pickle.dump(seq64, open(processed_data_dir+'yoochoose1_64/all_train_seq.txt', 'wb'))
