@@ -1,6 +1,7 @@
 from model import *
 import time
 import numpy as np
+from torch import nn, optim
 
 def build(parameters, resume):
     model = SRGNN(parameters=parameters)
