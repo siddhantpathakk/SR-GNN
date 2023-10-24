@@ -1,5 +1,6 @@
 from model import *
-
+import time
+import numpy as np
 
 def build(parameters, resume):
     model = SRGNN(parameters=parameters)
