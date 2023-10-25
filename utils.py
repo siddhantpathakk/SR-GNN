@@ -2,7 +2,6 @@ import time
 import csv
 import pickle
 import operator
-import datetime
 import os
 
 def prepare(dataset):
@@ -71,7 +70,7 @@ def prepare(dataset):
 
     # 7 days for test
     splitdate = splitdate = maxdate - 86400 * 1  # the number of seconds for a day：86400
-
+    print('Splitting date', splitdate)      # Yoochoose: ('Split date', 1411930799.0)
     tra_sess = filter(lambda x: x[1] < splitdate, dates)
     tes_sess = filter(lambda x: x[1] > splitdate, dates)
 
@@ -80,7 +79,8 @@ def prepare(dataset):
     tes_sess = sorted(tes_sess, key=operator.itemgetter(1))     # [(session_id, timestamp), (), ]
     print(len(tra_sess))    # 186670    # 7966257
     print(len(tes_sess))    # 15979     # 15324
-    
+    print(tra_sess[:3])
+    print(tes_sess[:3])
     return tra_sess, tes_sess, sess_clicks
     
     
@@ -143,7 +143,7 @@ def process_sequences(iseqs, idates):
 
 def preprocess():
     
-    processed_data_dir = 'data/processes/'
+    processed_data_dir = './data/processed/'
     train_sess, test_sess, sess_clicks = prepare('./data/yoochoose-clicks.dat')
     item_dict = {}
     
@@ -156,6 +156,11 @@ def preprocess():
     tra = (tr_seqs, tr_labs)
     tes = (te_seqs, te_labs)
     
+    print(len(tr_seqs))
+    print(len(te_seqs))
+    print(tr_seqs[:3], tr_dates[:3], tr_labs[:3])
+    print(te_seqs[:3], te_dates[:3], te_labs[:3])
+    
     n_sequences = 0
 
     for seq in train_seqs:
@@ -166,16 +171,18 @@ def preprocess():
         
     print('avg length: ', n_sequences/(len(train_seqs) + len(test_seqs) * 1.0))
     
-    if not os.path.exists('yoochoose1_4'):
-        os.makedirs('yoochoose1_4')
-    if not os.path.exists('yoochoose1_64'):
-        os.makedirs('yoochoose1_64')
+    if not os.path.exists(processed_data_dir+'yoochoose1_4'):
+        os.makedirs(processed_data_dir+'yoochoose1_4')
+    if not os.path.exists(processed_data_dir+'yoochoose1_64'):
+        os.makedirs(processed_data_dir+'yoochoose1_64')
         
     pickle.dump(tes, open(processed_data_dir+'yoochoose1_4/test.txt', 'wb'))
     pickle.dump(tes, open(processed_data_dir+'yoochoose1_64/test.txt', 'wb'))
 
     split4, split64 = int(len(tr_seqs) / 4), int(len(tr_seqs) / 64)
-
+    print(len(tr_seqs[-split4:]))
+    print(len(tr_seqs[-split64:]))
+    
     tra4, tra64 = (tr_seqs[-split4:], tr_labs[-split4:]), (tr_seqs[-split64:], tr_labs[-split64:])
     seq4, seq64 = train_seqs[tr_ids[-split4]:], train_seqs[tr_ids[-split64]:]
 
@@ -184,3 +191,7 @@ def preprocess():
 
     pickle.dump(tra64, open(processed_data_dir+'yoochoose1_64/train.txt', 'wb'))
     pickle.dump(seq64, open(processed_data_dir+'yoochoose1_64/all_train_seq.txt', 'wb'))
+    print('Done.')
+    
+if __name__ == '__main__':
+    preprocess()

@@ -5,6 +5,7 @@ from torch import nn, optim
 
 def build(parameters, resume):
     model = SRGNN(parameters=parameters)
+    
     if resume is not None:
         model = torch.load(resume)
     

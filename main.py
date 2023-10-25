@@ -6,7 +6,7 @@ from data_loader import *
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--batchSize', type=int, default=100, help='input batch size')
+    parser.add_argument('--batchSize', type=int, default=50, help='input batch size')
     parser.add_argument('--hiddenSize', type=int, default=100, help='hidden state size')
     parser.add_argument('--epoch', type=int, default=30, help='the number of epochs to train for')
     parser.add_argument('--lr', type=float, default=0.001, help='learning rate')  # [0.001, 0.0005, 0.0001]
@@ -17,7 +17,7 @@ def parse_args():
     parser.add_argument('--patience', type=int, default=10, help='the number of epoch to wait before early stop ')
     parser.add_argument('--nonhybrid', action='store_true', help='only use the global preference to predict')
     parser.add_argument('--nodes', type=int, help='number of nodes to use', default=37484)
-    parser.add_argument('--device', type=str, default='cuda:0', help='device to use')
+    parser.add_argument('--device', type=str, default='cuda', help='device to use')
     parser.add_argument('--resume', type=str, default=None, help='path of model to resume')
     args = parser.parse_args()
     print(args)
@@ -27,8 +27,8 @@ def parse_args():
 def main():
     args = parse_args()
     
-    train_data = pickle.load(open('../datasets/yoochoose1_4/train.txt', 'rb'))
-    test_data = pickle.load(open('../datasets/yoochoose1_4/test.txt', 'rb'))
+    train_data = pickle.load(open('./data/processed/yoochoose1_4/train.txt', 'rb'))
+    test_data = pickle.load(open('./data/processed/yoochoose1_4/test.txt', 'rb'))
 
     train_data = Data(train_data, shuffle=True)
     test_data = Data(test_data, shuffle=False)
