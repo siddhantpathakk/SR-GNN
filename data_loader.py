@@ -10,7 +10,7 @@ def data_masks(all_usr_pois, item_tail):
 
 
 
-class Data():
+class Data:
     def __init__(self, data, shuffle=False, graph=None):
         inputs = data[0]
         inputs, mask, len_max = data_masks(inputs, [0])
